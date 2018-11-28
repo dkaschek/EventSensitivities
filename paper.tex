@@ -238,10 +238,10 @@ where we have used the definition of $b(t_e)$. In the equation, $\cdot: \mathbb 
 The contributions from $b$ cancel out. In conclusion, we find that an event at time $t_e$ affects sensitivities with respect to $t_e$ of both the affected and unaffected states.\\
 
 \paragraph{Additive} 
-A constant $\Delta x_i$ is added to the value of the $i$'th state, $x_i$. In that case, $v_e$ is set to eq.~\eqref{eq:leqte} evaluated at $t_e$ plus the constant $\Delta x_i$. Therefore, the same argumentation as in the continuated case holds and the sensitivity is the same as eq.~\eqref{eq:continued}. The Difference $x_e - v_e$ turns out to be either 0 (for the continued states) or $\Delta x_k$ (for the affected states $k$, in particular $k = i$).\\
+A constant $\Delta x_i$ is added to the value of the $i$'th state, $x_i$. In that case, $v_e$ is set to eq.~\eqref{eq:leqte} evaluated at $t_e$ plus the constant $\Delta x_i$. Therefore, the same argumentation as in the continuated case holds and the sensitivity is the same as eq.~\eqref{eq:continued}. The difference $x_e - v_e$ turns out to be either 0 (for the continued states) or $-\Delta x_k$ (for the affected states $k$, in particular $k = i$).\\
 
 \paragraph{Multiplicative}
-The value of the $i$'th state, $x_i$, is multiplied with a constant $\alpha_i$. Eq.~\eqref{eq:continued} is evaluated at $t_e$ and multiplied by $\alpha$ to get $v_e$. Consequently, the derivative $\frac{\partial v_e}{\partial t_e}$ is computed and plugged into eq.~\eqref{eq:jump}, yielding
+The value of the $i$'th state, $x_i$, is multiplied with a constant $\alpha_i$. Eq.~\eqref{eq:leqte} is evaluated at $t_e$ and multiplied by $\alpha$ to get $v_e$. Consequently, the derivative $\frac{\partial v_e}{\partial t_e}$ is computed and plugged into eq.~\eqref{eq:jump}, yielding
 \begin{align}
     \lim_{t\searrow t_e}\frac{\partial x_i}{\partial t_e} = \left.\frac{\partial f_i}{\partial x}\right|_{x_e}\cdot (x_e - v_e) - (1-\alpha_i)f_i(x_e).
 \end{align}
@@ -250,7 +250,7 @@ The difference $x_e - v_e$ is either 0 (for the continued states) or $(1-\alpha_
 \subsection{Sensitivities with respect to $v_e$}
 
 % Derive sensitivities with respect to the jump value
-We use again the explicit solutions eqs.~\eqref{eq:linearized} and \eqref{eq:gte} and find that
+We use again the explicit solutions eqs.~\eqref{eq:leqte} and \eqref{eq:gte} and find that
 \begin{align}
     \left.\frac{\partial x}{\partial v_e}\right|_{t = t_e} =
     \left\{
@@ -330,8 +330,8 @@ In a similar way, we derive the table for additive events, see Table~\ref{tab:ad
      1 & $x_1$ & $\tau$ & $\delta$ & add \\
      \hline
      2 & $\sfrac{\partial x_1}{\partial p_j}$ & $\tau$ & $0$ & add \\
-     3 & $\sfrac{\partial x_1}{\partial \tau}$ & $\tau$ & $J_{11}\delta$ & add \\
-     4 & $\sfrac{\partial x_k}{\partial \tau}$ & $\tau$ & $J_{k1}\delta$ & add \\
+     3 & $\sfrac{\partial x_1}{\partial \tau}$ & $\tau$ & $-J_{11}\delta$ & add \\
+     4 & $\sfrac{\partial x_k}{\partial \tau}$ & $\tau$ & $-J_{k1}\delta$ & add \\
      5 &$\sfrac{\partial x_1}{\partial \delta}$ & $\tau$ & 1 & add \\
      \hline
 \end{tabular}
