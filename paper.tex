@@ -153,34 +153,34 @@
 	% \PARstart{}{} creates a tall first letter for this first paragraph
 	\PARstart{E}{vents} frequently are used in ODE systems.  These
 	events include intervention events such as a dose
-	or infusion, or process events like bile 
-	dumping and gastric emptying.  These events change ordinary 
-	differential equations (ODE) by changing its states.  Some of 
-	the more interesting system events like zero order release, gastric 
-	emptying and bioavailability are not known \emph{a-priori}.  Often these 
+	or infusion, or process events like bile
+	dumping and gastric emptying.  These events change ordinary
+	differential equations (ODE) by changing its states.  Some of
+	the more interesting system events like zero order release, gastric
+	emptying and bioavailability are not known \emph{a-priori}.  Often these
 	events should be estimated from available data.
-	
+
 	Like many data-based estimation methods we may have an initial guess about
 	when and how these events occur.  But we want to find the best solution
 	by optimization to the data. This most often performed while trying to
-	estimate some other processes and parameters of the ODE system. 
-	
-	Like many optimization problems with initial conditions, the system needs 
-	to maximize the likelihood surface based on the next best step.  
-	The directions to the best location is provided by the gradient.  
+	estimate some other processes and parameters of the ODE system.
+
+	Like many optimization problems with initial conditions, the system needs
+	to maximize the likelihood surface based on the next best step.
+	The directions to the best location is provided by the gradient.
 	With ODEs one way to calculate the is the forward sensitivity equations.
-	
+
 	Often when forward sensitivity analysis is calculated it is done without
 	considering the events that are estimated.  This has been more often  handled by
 	simple but inaccurate numerical derivatives, but less often by a formal
 	sensitivity analysis (Ref).  A formal sensitivity analysis adds accuracy and often speeds up computation.
-	
+
 	Exact forward sensitivities of these events have been calculated, called jump sensitivities. These jump sensitivities depend on other events making it more difficult to calculate the forward sensitivity for these events easily in optimization.  In one optimization example, the next event time needs to be known before the event based sensitivities are calculated.
-	
+
 	However, a simple linearization allows the event sensitivities to depend only on the event itself.  This simplification adds minuscule to no loss in accuracy in the point derivative at the event time.  Additionally, this will also speed up computational time because the next event times do not need to be calculated for optimization.  The cost of this method is to introduce new events to the sensitivity states already calculated.
-	
+
 	Because of these advantages, we would like to share this new method of calculating jump sensitivities.
-	
+
 
 % Main Part
 \section{Main Part}
@@ -189,7 +189,7 @@ Let $\dot x = f(x, p, t)$ be a system of ordinary differential equations (ODEs) 
 \begin{align}
 \begin{aligned}
     \frac{d}{dt}\frac{\partial x_i}{\partial p_j} &= \frac{d}{dp_j} f_i(x, p, t)\\
-        & = \frac{\partial f_i}{\partial x_k}\frac{\partial x_k}{\partial p_j} + 
+        & = \frac{\partial f_i}{\partial x_k}\frac{\partial x_k}{\partial p_j} +
             \frac{\partial f_i}{\partial p_j}.
 \end{aligned}
  \label{eq:sens}
@@ -203,7 +203,7 @@ The derivation is based on linearization of the ODE around $x(t_e) = x_e$, this 
     \dot x \doteq A(p, t) x + b(p, t)
     \label{eq:linearized}
 \end{align}
-with 
+with
 \begin{align*}
 A(p, t) &= \left.\frac{\partial f}{\partial x}\right|_{x_e}(p, t)\\
 b(p, t) &= f(x_e, p, t)- \left.\frac{\partial f}{\partial x}\right|_{x_e}(p, t)x_e.
@@ -213,7 +213,7 @@ The general solution of eq.~\eqref{eq:linearized} is
     x(t) = \Phi(t)x_0 + \Phi(t)\int_0^t \Phi^{-1}(\tau)b(\tau)d\tau,\quad t\leq t_e,
     \label{eq:leqte}
 \end{align}
-where $\Phi(t) = \big(\varphi_1(t), \dots, \varphi_n(t)\big)$ is the matrix of linearly independent solutions $\varphi_i(t)$ of the homogeneous part of eq.~\eqref{eq:linearized}, i.e., $\forall i:\;\dot\varphi_i = A(p, t)\varphi_i$ with initial condition $\varphi_i(0) = {\rm e}_i$, the $i$'th unit vector. 
+where $\Phi(t) = \big(\varphi_1(t), \dots, \varphi_n(t)\big)$ is the matrix of linearly independent solutions $\varphi_i(t)$ of the homogeneous part of eq.~\eqref{eq:linearized}, i.e., $\forall i:\;\dot\varphi_i = A(p, t)\varphi_i$ with initial condition $\varphi_i(0) = {\rm e}_i$, the $i$'th unit vector.
 
 First, we note that the original and linearized ODE's have the same sensitivity equations. The jumps of the sensitivities that we derive based on eq.~\eqref{eq:linearized} are therefore valid for the sensitivities of the original ODE, too. Second, the solution after the event time $t_e$ can be explicitly stated as
 \begin{align}
@@ -228,34 +228,36 @@ Based on the explicit solutions, eqs.~\eqref{eq:leqte} and \eqref{eq:gte}, we fi
     \left\{
     \begin{array}{ll}
     0     & \textrm{, for } t\nearrow t_e \\
-    -A v_e + \frac{\partial v_e}{\partial t_e} - b(t_e)     & \textrm{, for }t \searrow t_e, 
+    -A v_e + \frac{\partial v_e}{\partial t_e} - b(t_e)     & \textrm{, for }t \searrow t_e,
     \end{array}
     \right.
     \label{eq:jump}
 \end{align}
 where we have used that $\Phi(0) = \mathbb I$ is the unit matrix. The sensitivities with respect to $t_e$ jump at time point $t_e$. For $t > t_e$, the sensitivities propagate forward in time according to the sensitivity equations. The jump equation contains the derivative of $v_e$ which depends on the kind of the event.\\
 
-\paragraph{Replacement} 
+\paragraph{Replacement}
 The value of the $i$'th state, $x_i$, is set to a predefined value $v_{e, i}$. In that case, the derivative vanishes and the sensitivity at time $t_e$ is
 \begin{align}
     \lim_{t\searrow t_e}\frac{\partial x_i}{\partial t_e} = \left.\frac{\partial f_i}{\partial x}\right|_{x_e}\cdot (x_e - v_e) - f_i(x_e),
     \label{eq:replace}
 \end{align}
-where we have used the definition of $b(t_e)$. In the equation, $\cdot: \mathbb R^n\times \mathbb R^n\rightarrow \mathbb R$ denotes the scalar product. While the state value $x_i$ jumps, the other states $x_j$, $j\neq i$, are continued. Continuation means that $v_{e, j}$ is set to $x_{e, j}$ and we need eq.~\eqref{eq:leqte} evaluated at $t_e$ to get $\frac{\partial v_e}{\partial t_e} = Ax_e + b(t_e)$. The sensitivities become 
+where we have used the definition of $b(t_e)$. In the equation, $\cdot: \mathbb R^n\times \mathbb R^n\rightarrow \mathbb R$ denotes the scalar product. While the state value $x_i$ jumps, the other states $x_j$, $j\neq i$, are continued. Continuation means that $v_{e, j}$ is set to $x_{e, j}$ and we need eq.~\eqref{eq:leqte} evaluated at $t_e$ to get $\frac{\partial v_e}{\partial t_e} = Ax_e + b(t_e)$. The sensitivities become
 \begin{align}
     \lim_{t\searrow t_e}\frac{\partial x_j}{\partial t_e} = \left.\frac{\partial f_j}{\partial x}\right|_{x_e}\cdot (x_e - v_e).\label{eq:continued}
 \end{align}
-The contributions from $b$ cancel out. In conclusion, we find that an event at time $t_e$ affects sensitivities with respect to $t_e$ of both the affected and unaffected states.\\
+The contributions from $b$ cancel out. Due to the fact that all states except for $x_i$ are continued, the scalar product reduces to a single term. However, we find that an event at time $t_e$ affects sensitivities with respect to $t_e$ of both the affected and unaffected states.\\
 
-\paragraph{Additive} 
-A constant $\Delta x_i$ is added to the value of the $i$'th state, $x_i$. In that case, $v_e$ is set to eq.~\eqref{eq:leqte} evaluated at $t_e$ plus the constant $\Delta x_i$. Therefore, the same argumentation as in the continued case holds and the sensitivity is the same as eq.~\eqref{eq:continued}. The difference $x_e - v_e$ turns out to be either 0 (for the continued states) or $-\Delta x_i$ (for the affected state $i$).\\
+
+\paragraph{Additive}
+A constant $\Delta x_i$ is added to the value of the $i$'th state, $x_i$. In that case, $v_e$ is set to eq.~\eqref{eq:leqte} evaluated at $t_e$ plus the constant $\Delta x$. Therefore, the same argumentation as in the continued case holds for both, the affected and unaffected states, and the sensitivities are as eq.~\eqref{eq:continued} for states $i$ and $j\neq i$. \\
 
 \paragraph{Multiplicative}
 The value of the $i$'th state, $x_i$, is multiplied with a constant $\alpha_i$. Eq.~\eqref{eq:leqte} is evaluated at $t_e$ and multiplied by $\alpha$ to get $v_e$. Consequently, the derivative $\frac{\partial v_e}{\partial t_e}$ is computed and plugged into eq.~\eqref{eq:jump}, yielding
 \begin{align}
     \lim_{t\searrow t_e}\frac{\partial x_i}{\partial t_e} = \left.\frac{\partial f_i}{\partial x}\right|_{x_e}\cdot (x_e - v_e) - (1-\alpha_i)f_i(x_e).
 \end{align}
-The difference $x_e - v_e$ is either 0 (for the continued states) or $(1-\alpha_i)x_{e, i}$ (for the multiplied state).
+Same as for replacement events, the sensitivity of the affected and the unaffected states need to be distinguished. The term $(1-\alpha_i)f_i(x_e)$ only occurs for the affected state. Futhermore, all states except $x_i$ are continued. The scalar product therefore reduces to the $i$'th contribution.
+
 
 \subsection{Sensitivities with respect to $v_e$}
 
@@ -282,10 +284,10 @@ Again, the sensitivities jump. They are forward propagated according to their se
 
 In the above sections we have derived expressions for the jumps of sensitivities with respect to event parameters. In this section we show that also sensitivities with respect to other parameters are affected by the events.
 
-Let 
-%$\frac{d}{dt}\frac{\partial x}{\partial p_j} = F_j(\frac{\partial x}{\partial p})$, $j = 1, \dots, m$, 
+Let
+%$\frac{d}{dt}\frac{\partial x}{\partial p_j} = F_j(\frac{\partial x}{\partial p})$, $j = 1, \dots, m$,
 $S_j(t) = \frac{\partial x}{\partial p_j}(t) \in \mathbb R^n$
-be the sensitivities with respect to $p_j$ as derived from the solution for $t \leq t_e$, eq.~\eqref{eq:leqte}. On the other hand, the right-sided limit $t\searrow t_e$ of $\frac{\partial x}{\partial p_j}$ as derived from eq.~\eqref{eq:gte} yields 
+be the sensitivities with respect to $p_j$ as derived from the solution for $t \leq t_e$, eq.~\eqref{eq:leqte}. On the other hand, the right-sided limit $t\searrow t_e$ of $\frac{\partial x}{\partial p_j}$ as derived from eq.~\eqref{eq:gte} yields
 \begin{align}
     \lim_{t\searrow t_e}\frac{\partial x}{\partial p_j} = \frac{\partial v_e}{\partial p_j}.
     \label{eq:dxdp}
@@ -300,7 +302,7 @@ Based on eq.~\eqref{eq:dxdp} we construct sensitivities in case of replacement, 
 % sequence of events on the sensitivities. Derive this sequence
 % of events for the three methods "replace", "add" and "multiply"
 
-When working with events in numerical ODE solvers, events are typically specified by 
+When working with events in numerical ODE solvers, events are typically specified by
 \begin{center}
 \begin{tabular}{|c|c|c|c|}\hline
      var & time & value & method \\
@@ -308,7 +310,7 @@ When working with events in numerical ODE solvers, events are typically specifie
 \end{tabular}
 \end{center}
 where ``var'' denotes the state variable, ``time'' is the time point at which the event occurs, ``value'' is the event value and ``method'' is either replace, add or multiply.
-	
+
 Using the results from Section~\ref{sec:main}, we are going to derive the set of events that apply for the sensitivities.
 
 Without loss of generality, let ``var'' be $x_1$. The time and value parameters are denoted as $\tau$ and $\xi$, and the value be replaced. This event with the required additional events is shown in Table~\ref{tab:replacement}.
@@ -327,9 +329,13 @@ Without loss of generality, let ``var'' be $x_1$. The time and value parameters 
 \end{tabular}
 \end{center}
 \end{table}
-In the table, $j$ ranges from 1 to $m$, $J_{11}$ denotes the (1, 1)-element of the Jacobian $J_{ij} = \lim\limits_{t \nearrow \tau}\frac{\partial f_i}{\partial x_j}(x(t), p, t)$ and $f_1$ denotes the first element of $f_i := \lim\limits_{t \nearrow \tau}f_i(x(t), p, t)$. Note that, depending on the numeric implementation of the events, the symbolic expressions for $J_{11}$ and $f_1$ can be used and evaluated within the event function based on the state values at the event time before execution of the event.
+In the table, $j$ ranges from 1 to $m$, $J_{11}$ denotes the (1, 1)-element of the Jacobian $J_{ij} = \lim\limits_{t \nearrow \tau}\frac{\partial f_i}{\partial x_j}(x(t), p, t)$ and $f_1$ denotes the first element of $f_i := \lim\limits_{t \nearrow \tau}f_i(x(t), p, t)$.
+The differences $x_e - v_e$ are all zero except for the first state. Therefore, the scalar products in eqs.~\eqref{eq:replace} and \eqref{eq:continued} reduce to one contribution.
+Note that, depending on the code implementation of the events, the symbolic expressions for $J_{11}$ and $f_1$ can be used and evaluated within the event function based on the state values at the event time \textbf{before} execution of the event.
 
 Lines~3 and~4 have method = add because these contributions need to be accumulated when several events occur.
+
+% Here we could discuss that different events have different \tau and \xi parameters that are reduced to one by a parameter estimation. Then the sensitivities would just be added wich corresponds to adding the jumps.
 
 In a similar way, we derive the table for additive events, see Table~\ref{tab:additive}.
 \begin{table}[ht]
@@ -347,7 +353,7 @@ In a similar way, we derive the table for additive events, see Table~\ref{tab:ad
 \end{tabular}
 \end{center}
 \end{table}
-In the table, $\delta$ denotes the value which is added to $x_1$ at time $\tau$. The event in line~2 could be omitted. It is shown in the table to explicitly show that $\frac{\partial x_1}{\partial p_j}$ is not affected. 
+In the table, $\delta$ denotes the value which is added to $x_1$ at time $\tau$. The event in line~2 could be omitted. It is shown in the table to explicitly show that $\frac{\partial x_1}{\partial p_j}$ is not affected.
 
 Finally, the table for multiplicative events is derived, see Table~\ref{tab:multi}.
 \begin{table}[ht]
@@ -365,7 +371,7 @@ Finally, the table for multiplicative events is derived, see Table~\ref{tab:mult
 \end{tabular}
 \end{center}
 \end{table}
-In the table, $\alpha$ denotes the value by which $x_1$ is multiplied at time $\tau$. 
+In the table, $\alpha$ denotes the value by which $x_1$ is multiplied at time $\tau$.
 
 When implementing the additional events, one should keep in mind that:
 \begin{enumerate}
@@ -378,12 +384,12 @@ When implementing the additional events, one should keep in mind that:
 
 The event sensitivities are illustrated on a simple pharmacokinetic-pharmacodynamic (PK/PD) model. The PK and PD are described by a one compartment first order absorption model and an inhibitory IMAX model, respectively. The equations are
 \begin{align}
-  \frac{\rm d}{{\rm d}t}{\rm Ad} &= {\rm Favail}\cdot{\rm Input}-{\rm KA}\cdot{\rm Ad} \label{eq:ODE_1} \\ 
+  \frac{\rm d}{{\rm d}t}{\rm Ad} &= {\rm Favail}\cdot{\rm Input}-{\rm KA}\cdot{\rm Ad} \label{eq:ODE_1} \\
   \frac{\rm d}{{\rm d}t}{\rm Ac} &= {\rm KA}\cdot{\rm Ad}-\frac{\rm CL}{\rm V}{\rm Ac}\\
   \frac{\rm d}{{\rm d}t}{\rm Input} &= 0 \label{eq:ODE_3} \\
   {\rm Effect} &= {\rm E0}\cdot\left(1-\frac{\frac{\rm Ac}{\rm V}\cdot{\rm IMAX}}{{\rm IC50}+\frac{\rm Ac}{\rm V}}\right).\label{eq:effect}
 \end{align}
-All states and parameters are characterized in Table~\ref{tab:parameters}. 
+All states and parameters are characterized in Table~\ref{tab:parameters}.
 \begin{table}[hb]
     \caption{Overview of model states and parameters.}
     \centering
@@ -419,7 +425,7 @@ Typically, the dosing is parameterized in terms of the lag time (tlag), the dura
 \end{align}
 with ${\rm tlag} = 10$, ${\rm tinf} = 10$, ${\rm dose} = 200$. The model, eqs.~(\ref{eq:ODE_1}--\ref{eq:ODE_3}), has been simulated between $t = 0$ and $t = 60$ alongside the sensitivity equations. Subsequently, the response in the effect compartment, eq.~\eqref{eq:effect}, was evaluated based on the solution of the ODE. To illustrate the event sensitivities, we computed derivatives of the Effect with respect to tlag, tinf and dose, where we used the chain rule to obtain expressions in terms of model sensitivities ($\sfrac{\rm dAc}{\rm d \tau_1}$, $\sfrac{\rm dAc}{\rm d \tau_2}$ and $\sfrac{\rm dAc}{{\rm d} r_1}$), and the Jacobian of the dosing parameterization, eq.~\eqref{eq:dosing}.
 
-The simulation outcome is shown in Fig.~\ref{fig:simulation}. 
+The simulation outcome is shown in Fig.~\ref{fig:simulation}.
 \begin{figure}[ht]
     \centering
     \includegraphics{Code/example.pdf}
@@ -443,11 +449,11 @@ The paper used linearization of ODE models to derive left- and right-sided limit
 	%Each item starts with a \bibitem{reference} command and the details thereafter.
 	\bibitem{Bar98}
 	P.I.~Barton, R.J.~Allgor, W.F.~Feehery, and S.~Galán. Dynamic optimization in a discontinuous world. {\em Industrial \& Engineering Chemistry Research}, vol.~37, no.~3, pp.~966--981, Mar.~1998.
-	
+
 	\bibitem{Fro16}
 	F.~Fr{\"o}hlich, F.~Theis, J.O.~R{\"a}dler, and J.~Hasenauer. Parameter estimation for dynamical systems with discrete events and logical operations. {\em Bioinformatics}, vol.~33, no.~7, pp.~1049--1056, Dec.~2016.
-	
-	
+
+
 \end{thebibliography}
 
 % Your document ends here!
